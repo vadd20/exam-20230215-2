@@ -1,7 +1,4 @@
-package validator;
-
-import enums.Error;
-import enums.Gender;
+package validation;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,29 +23,16 @@ public class FileDataValidator {
 
         Integer counter = 1;
         for (String stringLine : stringLines) {
-            boolean isError = false;
             String[] data = stringLine.split(SEPARATOR);
-            if (data[0].length() > 100) {
-                isError = true;
-                errors.add(Error.NAME_IS_MORE_HUNDRED_SYMBOLS.getDescription());
-            }
 
-            if (Gender.findByCode(data[1]) == null) {
-                isError = true;
-                errors.add(Error.GENDER_IS_INCORRECT.getDescription());
-            }
+            List<Boolean> ruleIsValidResults = List.of(new NameMoreHundredSymbolsValidator().isValid(data[0], errors),
+                    new GenderIncorrectValidator().isValid(data[1], errors),
+                    new SalaryNotIntegerValidator().isValid(data[2], errors));
 
-            try {
-                Integer.parseInt(data[2]);
-            } catch (NumberFormatException e) {
-                isError = true;
-                errors.add(Error.SALARY_IS_NOT_INTEGER.getDescription());
-            }
-
-            if (!isError) {
-                correctLines.add(stringLine);
-            } else {
+            if (ruleIsValidResults.contains(false)) {
                 printError(counter, errors);
+            } else {
+                correctLines.add(stringLine);
             }
 
             counter++;
@@ -61,9 +45,8 @@ public class FileDataValidator {
         var sb = new StringBuilder();
         errors.forEach(e -> {
             sb.append(e).append("; ");
-            sb.delete(sb.length() - 2, sb.length());
-
         });
+        sb.delete(sb.length() - 3, sb.length() - 1);
         System.out.println(counter + ": " + sb);
     }
 }

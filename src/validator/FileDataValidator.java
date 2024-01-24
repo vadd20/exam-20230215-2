@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 /**
- * todo vpodogov
+ * Валидатор данных, полученных из файла.
  *
  * @author Vadim Podogov
  * @since 2024.01.24
